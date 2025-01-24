@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hacker Command Prompt</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            background-color: black;
+            color: green;
+            font-family: 'Courier New', Courier, monospace;
+            height: 100%;
+            overflow: hidden;
+        }
+        #terminal {
+            width: 100vw;
+            height: 100vh;
+            padding: 0;
+            box-sizing: border-box;
+            overflow-y: scroll;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        .input-line {
+            display: flex;
+            width: 100%;
+            box-sizing: border-box;
+            flex-shrink: 0;
+            align-items: center;
+            padding-left: 5px;
+        }
+        .prompt {
+            margin-right: 5px;
+            flex-shrink: 0;
+        }
+        .output {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            padding: 0 5px;
+            box-sizing: border-box;
+            flex-grow: 1;
+            width: 100%;
+        }
+        #input {
+            background: none;
+            border: none;
+            color: green;
+            outline: none;
+            width: 100%;
+            flex-grow: 1;
+        }
+        #clear-button, #toggle-commands-button {
+            position: fixed;
+            background-color: #333;
+            color: #0f0;
+            border: 1px solid #0f0;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            z-index: 10;
+        }
+        #clear-button {
+            bottom: 10px;
+            right: 10px;
+        }
+        #toggle-commands-button {
+            top: 10px;
+            right: 10px;
+        }
+        #clear-button:hover, #toggle-commands-button:hover {
+            background-color: #0f0;
+            color: #333;
+        }
+        .command-list-window {
+            position: absolute;
+            top: 50px;
+            right: 10px;
+            background-color: #111;
+            color: #0f0;
+            border: 1px solid #0f0;
+            padding: 10px;
+            font-size: 16px;
+            display: none;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <div id="terminal">
+        <div class="input-line">
+            <span class="prompt">></span>
+            <input type="text" id="input" autofocus>
+        </div>
+    </div>
+    <button id="clear-button">Clear Commands</button>
+    <button id="toggle-commands-button">Show Commands</button>
+
+    <!-- Available Commands Window -->
+    <div class="command-list-window" id="commandListWindow">
+        <strong>Available Commands:</strong>
+        <ul>
+            <li><strong>help</strong> - Show available commands</li>
+            <li><strong>malware</strong> - Learn about Malware</li>
+            <li><strong>dos</strong> - Learn about Denial-of-Service Attacks</li>
+            <li><strong>phishing</strong> - Learn about Phishing</li>
+            <li><strong>spoofing</strong> - Learn about Spoofing</li>
+            <li><strong>identity-based</strong> - Learn about Identity-Based Attacks</li>
+            <li><strong>code-injection</strong> - Learn about Code Injection Attacks</li>
+            <li><strong>supply-chain</strong> - Learn about Supply Chain Attacks</li>
+            <li><strong>social-engineering</strong> - Learn about Social Engineering Attacks</li>
+            <li><strong>insider-threats</strong> - Learn about Insider Threats</li>
+            <li><strong>dns-tunneling</strong> - Learn about DNS Tunneling</li>
+            <li><strong>iot-attacks</strong> - Learn about IoT-Based Attacks</li>
+            <li><strong>ai-powered</strong> - Learn about AI-Powered Attacks</li>
+            <li><strong>exit</strong> - Exit the application</li>
+            <li><strong>Ctrl + C</strong> - Stop running command</li>
+        </ul>
+    </div>
+
+    <script>
+        const terminal = document.getElementById('terminal');
+        const input = document.getElementById('input');
+        const clearButton = document.getElementById('clear-button');
+        const toggleCommandsButton = document.getElementById('toggle-commands-button');
+        const commandListWindow = document.getElementById('commandListWindow');
+
+        const commands = {
+            'help': `Available commands:\nhelp - Show this help menu\nmalware - Learn about Malware\n` +
+                    `dos - Learn about Denial-of-Service\nphishing - Learn about Phishing\nspoofing - Learn about Spoofing\n` +
+                    `identity-based - Learn about Identity-Based\ncode-injection - Learn about Code Injection\n` +
+                    `supply-chain - Learn about Supply Chain\nsocial-engineering - Learn about Social Engineering\n` +
+                    `insider-threats - Learn about Insider Threats\ndns-tunneling - Learn about DNS Tunneling\n` +
+                    `iot-attacks - Learn about IoT-Based attacks\nai-powered - Learn about AI-Powered attacks\nexit - Exit the application`,
+            'malware': 'Malware refers to malicious software designed to harm, exploit, or otherwise compromise the target device or network.',
+            'dos': 'Denial-of-Service attacks aim to make a machine or network resource unavailable by overwhelming it with requests.',
+            'phishing': 'Phishing involves tricking individuals into providing sensitive information through deceptive emails or websites.',
+            'spoofing': 'Spoofing is the act of disguising communication from an unknown source as being from a known, trusted source.',
+            'identity-based': 'Identity-Based attacks target user identities to gain unauthorized access or commit fraud.',
+            'code-injection': 'Code Injection attacks introduce malicious code into a vulnerable application, often leading to unauthorized actions.',
+            'supply-chain': 'Supply Chain attacks target vulnerabilities in an organization’s supply chain, affecting third-party suppliers or services.',
+            'social-engineering': 'Social Engineering attacks exploit human psychology to gain unauthorized access to information or systems.',
+            'insider-threats': 'Insider Threats are posed by individuals within an organization who intentionally or unintentionally compromise security.',
+            'dns-tunneling': 'DNS Tunneling uses DNS protocol to transmit malicious traffic to bypass firewalls or other security mechanisms.',
+            'iot-attacks': 'IoT Attacks target vulnerabilities in Internet of Things devices, often leading to large-scale compromises.',
+            'ai-powered': 'AI-Powered Attacks use artificial intelligence and machine learning to develop sophisticated and adaptive threats.',
+            'exit': 'Exiting the application...'
+        };
+
+        const commandPatterns = {
+            'malware': 'Scanning for Malware...\n[SCAN] >>> ',
+            'dos': 'Initiating DoS Attack...\n[FLOOD] >>> ',
+            'phishing': 'Launching Phishing Campaign...\n[SPOOF] >>> ',
+            'spoofing': 'Launching Spoofing Attack...\n[DISGUISE] >>> ',
+            'identity-based': 'Initiating Identity-Based Attack...\n[IMPERSONATE] >>> ',
+            'code-injection': 'Executing Code Injection...\n[EXPLOIT] >>> ',
+            'supply-chain': 'Compromising Supply Chain...\n[COMPROMISED] >>> ',
+            'social-engineering': 'Launching Social Engineering Attack...\n[MANIPULATE] >>> ',
+            'insider-threats': 'Executing Insider Threat...\n[INSIDER_ATTACK] >>> ',
+            'dns-tunneling': 'Establishing DNS Tunnel...\n[TUNNEL_ESTABLISHED] >>> ',
+            'iot-attacks': 'Launching IoT Attack...\n[IoT_EXECUTE] >>> ',
+            'ai-powered': 'Deploying AI-Powered Attack...\n[AI_EXECUTE] >>> '
+        };
+
+        let interval;
+        let currentCommand;
+        let isStopped = false;  // Keeps track of whether Ctrl+C has been pressed
+
+        input.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                const command = input.value.trim();
+                input.value = '';
+                executeCommand(command);
+            }
+            // Handle Ctrl + C to stop the infinite command output
+            if (event.ctrlKey && event.key === 'c') {
+                stopInfiniteOutput();
+            }
+        });
+
+        clearButton.addEventListener('click', function() {
+            // Clear all output without affecting the input field
+            const outputs = terminal.querySelectorAll('.output');
+            outputs.forEach(output => output.remove());
+        });
+
+        toggleCommandsButton.addEventListener('click', function() {
+            commandListWindow.style.display = 
+                commandListWindow.style.display === 'none' || commandListWindow.style.display === '' 
+                ? 'block' 
+                : 'none';
+        });
+
+        function executeCommand(command) {
+            if (command === 'exit') {
+                appendOutput('Exiting the application...');
+                // Optionally, close the window if allowed
+                window.close();
+                return;
+            }
+
+            if (commands[command]) {
+                appendOutput(commands[command]);
+                if (commandPatterns[command]) {
+                    startInfiniteOutput(command);
+                }
+            } else {
+                appendOutput(`Command not found: ${command}`);
+            }
+        }
+
+        function appendOutput(text) {
+            const outputLine = document.createElement('div');
+            outputLine.className = 'output';
+            outputLine.textContent = text;
+            terminal.appendChild(outputLine);
+            scrollToBottom();
+        }
+
+        function startInfiniteOutput(command) {
+            if (interval) return;
+            currentCommand = command;
+            isStopped = false;  // Reset stop flag when starting
+            interval = setInterval(() => {
+                const randomOutput = generateCommandOutput(command);
+                appendOutput(randomOutput);
+            }, 100);
+        }
+
+        function stopInfiniteOutput() {
+            if (interval) {
+                clearInterval(interval);
+                interval = null;
+                isStopped = true;  // Set the flag to indicate that Ctrl+C has been pressed
+            }
+        }
+
+        function generateCommandOutput(command) {
+            const prefix = commandPatterns[command] || '';
+            let result = '';
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
+            for (let i = 0; i < 50; i++) {
+                result += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            return prefix + result;
+        }
+
+        function scrollToBottom() {
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        // Focus trap to prevent interaction outside the input
+        document.addEventListener('click', function() {
+            input.focus();
+        });
+    </script>
+</body>
+</html>

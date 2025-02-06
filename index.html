@@ -241,7 +241,7 @@
         function generateCommandOutput(command) {
             const prefix = commandPatterns[command] || '';
             let result = '';
-            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&©™><|½¶§øæ*()';
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&©™><|½¶§øæ"£$€¥{[]}\*()';
             for (let i = 0; i < 50; i++) {
                 result += characters.charAt(Math.floor(Math.random() * characters.length));
             }

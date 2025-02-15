@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fake Cmd</title>
+    <title>Fake CMD</title>
     <style>
         body, html {
             margin: 0;
@@ -241,7 +241,7 @@
         function generateCommandOutput(command) {
             const prefix = commandPatterns[command] || '';
             let result = '';
-            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&©™><|½¶§øæ"£$€¥{[]}\⌘←↑→↓•●–—―‽‖«»‹›❝❞®°℃℉≠±√‰Ω∞ÀÁÂÃ¼½¾ÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæèéêëìíîïðñòóôõöøùúûýþÿĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪĬĭĮįİıĲĳĴĵĶĸĹĺĻļĽľĿŀŁłŃńŅņŇňŉŊŌōŎşŐőŒœŔŕŖŗŚśŜŝŞşŠšŢţŤťŦŧŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽ☚☛☜☞☟★☆♠♣♥♦♪♫♯♀*()';
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#'
             for (let i = 0; i < 50; i++) {
                 result += characters.charAt(Math.floor(Math.random() * characters.length));
             }
